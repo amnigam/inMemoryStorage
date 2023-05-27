@@ -15,6 +15,11 @@ app.get('/', async (req, res) => {
 
 app.get('/path', controller.pathRender);  
 
+app.get('/dog', controller.dogBuild,
+                controller.dogRender)
+
+app.get('/dogurl', controller.dogUrl)                
+
 app.listen(3000, () => {
     console.log('App is listening.')
 }); 

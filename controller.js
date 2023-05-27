@@ -1,5 +1,7 @@
 const db = require('./sqlDb'); 
 const fs = require('fs'); 
+const nativeDS = require('./dataStore');    // This exposes an object with 2 methods to demo add/retrieval of data. 
+const axios = require('axios'); 
 
 module.exports.pathRender = async (req, res, next) => {
     const obj = {
@@ -20,4 +22,30 @@ module.exports.pathRender = async (req, res, next) => {
     
     // Sending back the key from previous path to test for persistence. 
     res.send(await db.get('key')); 
+}
+
+module.exports.dogBuild = async (req, res, next) => {
+    const dogUrl = await axios.get('https://dog.ceo/api/breeds/image/random'); 
+    req.dogUrl = dogUrl.data.message;       // Setting a property on the REQ body pointing to dog img url. 
+    console.log(req.dogUrl); 
+    next(); 
+}
+
+module.exports.dogRender = async (req, res, next) => {
+    const dogImg = await axios.get(req.dogUrl);       // retrieve it from req body set in previous middleware. 
+    const html = `<img src=${req.dogUrl} >`     // Show the image on the page. 
+
+    url = req.dogUrl;
+    urlObj = {link: url}; 
+
+    console.log("Object we are passing in: ", urlObj); 
+    nativeDS.addData('url', urlObj);   // leverage the addData method to add the object into our data store. 
+    res.send(html); 
+}
+
+module.exports.dogUrl = (req, res, next) => {
+    // In this function we retrieve the data stored in our native data store. 
+    const data = nativeDS.getAllData('url'); 
+    console.log(data); 
+    res.json(data); 
 }
