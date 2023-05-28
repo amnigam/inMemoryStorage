@@ -33,7 +33,11 @@ module.exports.dogBuild = async (req, res, next) => {
 
 module.exports.dogRender = async (req, res, next) => {
     const dogImg = await axios.get(req.dogUrl);       // retrieve it from req body set in previous middleware. 
-    const html = `<img src=${req.dogUrl} >`     // Show the image on the page. 
+    const temp = JSON.stringify(req.session.animalObj); 
+    const html = `<img src=${req.dogUrl} >
+                    <div> ${temp}</div> 
+                    <a href='/'>Home </a>
+                    `     // Show the image on the page. 
 
     url = req.dogUrl;
     urlObj = {link: url}; 
